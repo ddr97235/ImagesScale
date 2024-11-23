@@ -87,7 +87,7 @@
             <RadioButton  Content="0.1x" GroupName="Scale" Margin="10"
                           IsChecked="{Binding Scale, ConverterParameter=10, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
 
-            <TextBlock Text="{Binding ViewBox, Source={StaticResource sd}}"/>
+            <TextBlock Text="{Binding ViewboxAbsolute, Source={StaticResource sd}}"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Grid.Column="2" ClipToBounds="True">
@@ -95,20 +95,10 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
-            <Border BorderThickness="2" BorderBrush="Green">
-                <Grid x:Name="grid" views:ScaleData.ScaleBox="{Binding ViewboxAbsolute, Source={StaticResource sd}}">
-                    <Grid.Background>
-                        <VisualBrush Visual="{Binding Visual, Source={StaticResource sd}}"
-                                 Stretch="Uniform"
-                                 Viewbox="{Binding ViewboxRelative, Source={StaticResource sd}}" ViewboxUnits="RelativeToBoundingBox"
-                                 Viewport="{Binding Path=(views:ScaleData.Viewport), ElementName=grid}"/>
-                    </Grid.Background>
-                    <StackPanel>
-                        <TextBlock Text="{Binding Viewbox, Source={StaticResource sd}}"/>
-                        <TextBlock Text="{Binding Path=(views:ScaleData.Viewport), ElementName=grid}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
+            <Rectangle views:ScaleData.TargetBox="{DynamicResource sd}"
+                       Fill="{Binding Path=(views:ScaleData.VisualBrush), RelativeSource={RelativeSource Self}}"
+                       Stroke="Green" StrokeThickness="2">
+            </Rectangle>
             <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="10"
                           ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" Cursor="SizeWE"/>
         </Grid>

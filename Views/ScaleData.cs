@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ImagesScale.Views
 {
@@ -270,7 +273,78 @@ namespace ImagesScale.Views
             port.Y = 0.5 * (1 - port.Height);
 
             SetViewport(fe, port);
+
+            if (GetTargetBox(fe) is ScaleData sd)
+            {
+                VisualBrush brush = new VisualBrush()
+                {
+                    Stretch = Stretch.Uniform,
+                    ViewportUnits = BrushMappingMode.RelativeToBoundingBox,
+                    Viewport = port
+                };
+
+                BindingOperations.SetBinding(brush, VisualBrush.VisualProperty, new Binding() { Path = new PropertyPath(VisualProperty), Source = sd });
+                BindingOperations.SetBinding(brush, VisualBrush.ViewboxProperty, new Binding() { Path = new PropertyPath(ViewboxRelativeProperty), Source = sd });
+
+                SetVisualBrush(fe, brush);
+            }
+
         }
+
+
+
+        //public ScaleData TargetBox
+        //{
+        //    get { return (ScaleData)GetValue(TargetBoxProperty); }
+        //    set { SetValue(TargetBoxProperty, value); }
+        //}
+
+        //// Using a DependencyProperty as the backing store for TargetBox.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty TargetBoxProperty =
+        //    DependencyProperty.Register(nameof(TargetBoxProperty)[0..^8],
+        //                                typeof(ScaleData),
+        //                                typeof(ScaleData),
+        //                                new PropertyMetadata(null)
+        //                                {
+        //                                    PropertyChangedCallback = (d, e) =>
+        //                                    {
+        //                                        FrameworkElement fe = (FrameworkElement)d;
+        //                                        if (e.NewValue is ScaleData sd)
+        //                                        {
+        //                                            SetScaleBox(fe, sd.ViewboxAbsolute);
+        //                                        }
+        //                                    }
+        //                                });
+
+
+
+
+        public static ScaleData GetTargetBox(DependencyObject obj)
+        {
+            return (ScaleData)obj.GetValue(TargetBoxProperty);
+        }
+
+        public static void SetTargetBox(DependencyObject obj, ScaleData value)
+        {
+            obj.SetValue(TargetBoxProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for TargetBox.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TargetBoxProperty =
+            DependencyProperty.RegisterAttached(nameof(TargetBoxProperty)[0..^8],
+                                        typeof(ScaleData),
+                                        typeof(ScaleData),
+                                        new PropertyMetadata(null)
+                                        {
+                                            PropertyChangedCallback = (d, e) =>
+                                            {
+                                                FrameworkElement fe = (FrameworkElement)d;
+                                                if (e.NewValue is ScaleData sd)
+                                                {
+                                                    SetScaleBox(fe, sd.ViewboxAbsolute);
+                                                }
+                                            }
+                                        });
 
 
 
@@ -294,13 +368,11 @@ namespace ImagesScale.Views
                                                     PropertyChangedCallback = (d, e) =>
                                                     {
                                                         FrameworkElement fe = (FrameworkElement)d;
-                                                        if(e.NewValue is ScaleData sd)
+                                                        if (e.NewValue is ScaleData sd)
                                                         {
                                                             sd.Visual = fe;
                                                         }
                                                     }
                                                 });
-
-
     }
 }
