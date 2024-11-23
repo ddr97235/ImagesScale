@@ -13,11 +13,6 @@
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
-    <Window.Resources>
-        <views:ScaleData x:Key="sd"
-                         Visual="{Binding ElementName=example}"
-                         Scale="1"/>
-    </Window.Resources>
 
     <Grid ShowGridLines="True" Margin="10">
         <Grid.RowDefinitions>
@@ -34,7 +29,8 @@
         <Grid Background="LightBlue">
             <Image x:Name="originalImage" Source="{Binding ImageSource}" 
                        Stretch="Uniform" Visibility="Hidden"/>
-            <ItemsControl x:Name="example" HorizontalAlignment="Center">
+            <ItemsControl x:Name="example" HorizontalAlignment="Center"
+                          views:ScaleData.ScaleData="{DynamicResource sd}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Rows="2" Columns="2"

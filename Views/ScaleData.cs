@@ -271,5 +271,36 @@ namespace ImagesScale.Views
 
             SetViewport(fe, port);
         }
+
+
+
+        public static ScaleData GetScaleData(FrameworkElement obj)
+        {
+            return (ScaleData)obj.GetValue(ScaleDataProperty);
+        }
+
+        public static void SetScaleData(FrameworkElement obj, ScaleData value)
+        {
+            obj.SetValue(ScaleDataProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ScaleDataProperty =
+            DependencyProperty.RegisterAttached(nameof(ScaleDataProperty)[0..^8],
+                                                typeof(ScaleData),
+                                                typeof(ScaleData),
+                                                new PropertyMetadata(null)
+                                                {
+                                                    PropertyChangedCallback = (d, e) =>
+                                                    {
+                                                        FrameworkElement fe = (FrameworkElement)d;
+                                                        if(e.NewValue is ScaleData sd)
+                                                        {
+                                                            sd.Visual = fe;
+                                                        }
+                                                    }
+                                                });
+
+
     }
 }
