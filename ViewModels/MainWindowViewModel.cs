@@ -1,14 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using ImagesScale.Models;
-using Windows.Graphics.Imaging;
-using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.Input;
+using ImagesScale.Models;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Windows.Graphics.Imaging;
 
 namespace ImagesScale.ViewModels
 {

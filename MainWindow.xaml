@@ -7,17 +7,19 @@
         xmlns:vm="clr-namespace:ImagesScale.ViewModels"
         xmlns:views="clr-namespace:ImagesScale.Views"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:cc="clr-namespace:WpfCustomControlsCore"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <views:ScaleValueToIndex x:Key="scaleValueToIndex"/>
+        <views:ScaleData x:Key="sd"
+                         Visual="{Binding ElementName=example}"
+                         Scale="1"/>
     </Window.Resources>
 
-    <Grid ShowGridLines="True">
+    <Grid ShowGridLines="True" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
@@ -28,76 +30,91 @@
             <ColumnDefinition Width="0.2*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Viewbox Grid.Row="0" Grid.Column="0"  VerticalAlignment="Top">
-            <Grid>
-                <Image Source="{Binding ImageSource}" 
-                       local:MouseClickCommandHelper.MouseClickCommand="{Binding ImageClickCommand}" />
-                <Canvas>
-                    <Border  CornerRadius="10"
-                             Width="{Binding BorderWidth}" 
-                             Height="{Binding BorderHeigth}"
-                             Canvas.Left="{Binding BorderStartX}" 
-                             Canvas.Top="{Binding BorderStartY}"
-					BorderThickness="4" BorderBrush="Red"/>
-                </Canvas>
-            </Grid>
-        </Viewbox>
+        <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Grid Background="LightBlue">
+            <Image x:Name="originalImage" Source="{Binding ImageSource}" 
+                       Stretch="Uniform" Visibility="Hidden"/>
+            <ItemsControl x:Name="example" HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="2" Columns="2"
+                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <UniformGrid Rows="2" Columns="2"
+                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
+                            <Border Background="Coral"/>
+                            <Border Background="Green"/>
+                            <Border Background="Yellow"/>
+                            <Border Background="Blue"/>
+                        </UniformGrid>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <cc:DecoratorAdoner.Child>
+                    <Canvas>
+                        <Border  CornerRadius="10"
+                                 Width="{Binding ViewboxAbsolute.Width, Source={StaticResource sd}}"
+                                 Height="{Binding ViewboxAbsolute.Height, Source={StaticResource sd}}"
+                                 Canvas.Left="{Binding ViewboxAbsolute.Left, Mode=OneWay, Source={StaticResource sd}}"
+                                 Canvas.Top="{Binding ViewboxAbsolute.Top, Mode=OneWay, Source={StaticResource sd}}"
+                                 BorderThickness="4" BorderBrush="Red"/>
+                    </Canvas>
+                </cc:DecoratorAdoner.Child>
+                <ItemsControl.ItemsSource>
+                    <x:Array Type="Point">
+                        <Point></Point>
+                        <Point></Point>
+                        <Point></Point>
+                        <Point></Point>
+                    </x:Array>
+                </ItemsControl.ItemsSource>
+            </ItemsControl>
+        </Grid>
 
         <StackPanel Grid.Column="2" >
             <TextBlock Text="Выбора масштаба" HorizontalAlignment="Center" Margin="20"/>
-            <RadioButton  Content="1x" GroupName="Scale" Margin="10">
-                <RadioButton.IsChecked>
-                    <Binding Path="ScaleIndex" Converter="{StaticResource scaleValueToIndex}">
-                        <Binding.ConverterParameter>
-                            <sys:Int32>0</sys:Int32>
-                        </Binding.ConverterParameter>
-                    </Binding>
-                </RadioButton.IsChecked>
-            </RadioButton>
-            <RadioButton  Content="0.5x" GroupName="Scale" Margin="10">
-                <RadioButton.IsChecked>
-                    <Binding Path="ScaleIndex" Converter="{StaticResource scaleValueToIndex}">
-                        <Binding.ConverterParameter>
-                            <sys:Int32>1</sys:Int32>
-                        </Binding.ConverterParameter>
-                    </Binding>
-                </RadioButton.IsChecked>
-            </RadioButton>
-            <RadioButton  Content="0.25x" GroupName="Scale" Margin="10">
-                <RadioButton.IsChecked>
-                    <Binding Path="ScaleIndex" Converter="{StaticResource scaleValueToIndex}">
-                        <Binding.ConverterParameter>
-                            <sys:Int32>2</sys:Int32>
-                        </Binding.ConverterParameter>
-                    </Binding>
-                </RadioButton.IsChecked>
-            </RadioButton>
-            <RadioButton  Content="0.1x" GroupName="Scale" Margin="10">
-                <RadioButton.IsChecked>
-                    <Binding Path="ScaleIndex" Converter="{StaticResource scaleValueToIndex}">
-                        <Binding.ConverterParameter>
-                            <sys:Int32>3</sys:Int32>
-                        </Binding.ConverterParameter>
-                    </Binding>
-                </RadioButton.IsChecked>
-            </RadioButton>
+            <RadioButton  Content="1x" GroupName="Scale" Margin="10"
+                          IsChecked="{Binding Scale, ConverterParameter=1, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
+
+            <RadioButton  Content="0.75x" GroupName="Scale" Margin="10"
+                          IsChecked="{Binding Scale, ConverterParameter=1.333333333333333333333, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
+
+            <RadioButton  Content="0.5x" GroupName="Scale" Margin="10"
+                          IsChecked="{Binding Scale, ConverterParameter=2, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
+
+            <RadioButton  Content="0.25x" GroupName="Scale" Margin="10"
+                          IsChecked="{Binding Scale, ConverterParameter=4, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
+
+            <RadioButton  Content="0.1x" GroupName="Scale" Margin="10"
+                          IsChecked="{Binding Scale, ConverterParameter=10, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
+
+            <TextBlock Text="{Binding ViewBox, Source={StaticResource sd}}"/>
         </StackPanel>
-        <Viewbox Grid.Row="1" Grid.Column="2" ClipToBounds="True">
-            <Grid Width="{Binding BorderWidth}"
-                  Height="{Binding BorderHeigth}">
-                <Grid.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding UpScale}" 
-                                    ScaleY="{Binding UpScale}"/>
-                </Grid.RenderTransform>
-                <Canvas >
-                    <Image Source="{Binding ImageSource}" 
-                           Width="{Binding BorderWidth}"
-                           Height="{Binding BorderHeigth}"
-                           Canvas.Left="{Binding Image2_OffsetX}"
-                           Canvas.Top="{Binding Image2_OffsetY}"/>
-                </Canvas>
-            </Grid>
-        </Viewbox>
+
+        <Grid Grid.Row="1" Grid.Column="2" ClipToBounds="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            <Border BorderThickness="2" BorderBrush="Green">
+                <Grid x:Name="grid" views:ScaleData.ScaleBox="{Binding ViewboxAbsolute, Source={StaticResource sd}}">
+                    <Grid.Background>
+                        <VisualBrush Visual="{Binding Visual, Source={StaticResource sd}}"
+                                 Stretch="Uniform"
+                                 Viewbox="{Binding ViewboxRelative, Source={StaticResource sd}}" ViewboxUnits="RelativeToBoundingBox"
+                                 Viewport="{Binding Path=(views:ScaleData.Viewport), ElementName=grid}"/>
+                    </Grid.Background>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Viewbox, Source={StaticResource sd}}"/>
+                        <TextBlock Text="{Binding Path=(views:ScaleData.Viewport), ElementName=grid}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="10"
+                          ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" Cursor="SizeWE"/>
+        </Grid>
     </Grid>
 </Window>
