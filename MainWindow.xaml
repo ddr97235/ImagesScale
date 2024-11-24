@@ -26,6 +26,7 @@
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Rectangle Fill="LightBlue"/>
         <Image Source="{Binding ImageSource}"
                Stretch="Uniform"
                views:ScaleData.ScaleData="{DynamicResource sd}">
