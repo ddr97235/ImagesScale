@@ -31,14 +31,15 @@
                Stretch="Uniform"
                views:ScaleData.ScaleData="{DynamicResource sd}">
             <cc:DecoratorAdoner.Child>
-                <Canvas>
-                    <Border  CornerRadius="10"
-                             Width="{Binding ViewboxAbsolute.Width, Source={StaticResource sd}}"
-                             Height="{Binding ViewboxAbsolute.Height, Source={StaticResource sd}}"
-                             Canvas.Left="{Binding ViewboxAbsolute.Left, Mode=OneWay, Source={StaticResource sd}}"
-                             Canvas.Top="{Binding ViewboxAbsolute.Top, Mode=OneWay, Source={StaticResource sd}}"
-                             BorderThickness="4" BorderBrush="Red"/>
-                </Canvas>
+                <Rectangle Stroke="Red" StrokeThickness="4"
+                           Width="{Binding ViewboxAbsolute.Width, Source={StaticResource sd}}"
+                           Height="{Binding ViewboxAbsolute.Height, Source={StaticResource sd}}"
+                           RadiusX="10" RadiusY="10">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform X="{Binding ViewboxAbsolute.Left, Mode=OneWay, Source={StaticResource sd}}"
+                                            Y="{Binding ViewboxAbsolute.Top, Mode=OneWay, Source={StaticResource sd}}"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
             </cc:DecoratorAdoner.Child>
         </Image>
 
