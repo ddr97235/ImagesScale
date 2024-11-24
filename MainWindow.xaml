@@ -26,22 +26,20 @@
             <ColumnDefinition Width="1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Grid Background="LightBlue">
-            <Image Source="{Binding ImageSource}"
-                   Stretch="Uniform"
-                   views:ScaleData.ScaleData="{DynamicResource sd}">
-                <cc:DecoratorAdoner.Child>
-                    <Canvas>
-                        <Border  CornerRadius="10"
-                                 Width="{Binding ViewboxAbsolute.Width, Source={StaticResource sd}}"
-                                 Height="{Binding ViewboxAbsolute.Height, Source={StaticResource sd}}"
-                                 Canvas.Left="{Binding ViewboxAbsolute.Left, Mode=OneWay, Source={StaticResource sd}}"
-                                 Canvas.Top="{Binding ViewboxAbsolute.Top, Mode=OneWay, Source={StaticResource sd}}"
-                                 BorderThickness="4" BorderBrush="Red"/>
-                    </Canvas>
-                </cc:DecoratorAdoner.Child>
-            </Image>
-        </Grid>
+        <Image Source="{Binding ImageSource}"
+               Stretch="Uniform"
+               views:ScaleData.ScaleData="{DynamicResource sd}">
+            <cc:DecoratorAdoner.Child>
+                <Canvas>
+                    <Border  CornerRadius="10"
+                             Width="{Binding ViewboxAbsolute.Width, Source={StaticResource sd}}"
+                             Height="{Binding ViewboxAbsolute.Height, Source={StaticResource sd}}"
+                             Canvas.Left="{Binding ViewboxAbsolute.Left, Mode=OneWay, Source={StaticResource sd}}"
+                             Canvas.Top="{Binding ViewboxAbsolute.Top, Mode=OneWay, Source={StaticResource sd}}"
+                             BorderThickness="4" BorderBrush="Red"/>
+                </Canvas>
+            </cc:DecoratorAdoner.Child>
+        </Image>
 
         <StackPanel Grid.Column="2" >
             <TextBlock Text="Выбора масштаба" HorizontalAlignment="Center" Margin="20"/>
