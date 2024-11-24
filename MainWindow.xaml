@@ -27,28 +27,9 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <Grid Background="LightBlue">
-            <Image x:Name="originalImage" Source="{Binding ImageSource}" 
-                       Stretch="Uniform" Visibility="Hidden"/>
-            <ItemsControl x:Name="example" HorizontalAlignment="Center"
-                          views:ScaleData.ScaleData="{DynamicResource sd}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Rows="2" Columns="2"
-                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <UniformGrid Rows="2" Columns="2"
-                                     Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}">
-                            <Border Background="Coral"/>
-                            <Border Background="Green"/>
-                            <Border Background="Yellow"/>
-                            <Border Background="Blue"/>
-                        </UniformGrid>
-
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+            <Image Source="{Binding ImageSource}"
+                   Stretch="Uniform"
+                   views:ScaleData.ScaleData="{DynamicResource sd}">
                 <cc:DecoratorAdoner.Child>
                     <Canvas>
                         <Border  CornerRadius="10"
@@ -59,15 +40,7 @@
                                  BorderThickness="4" BorderBrush="Red"/>
                     </Canvas>
                 </cc:DecoratorAdoner.Child>
-                <ItemsControl.ItemsSource>
-                    <x:Array Type="Point">
-                        <Point></Point>
-                        <Point></Point>
-                        <Point></Point>
-                        <Point></Point>
-                    </x:Array>
-                </ItemsControl.ItemsSource>
-            </ItemsControl>
+            </Image>
         </Grid>
 
         <StackPanel Grid.Column="2" >
@@ -96,7 +69,7 @@
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
             <Rectangle views:ScaleData.TargetBox="{DynamicResource sd}"
-                       Fill="{Binding Path=(views:ScaleData.VisualBrush), RelativeSource={RelativeSource Self}}"
+                       Fill="{Binding (views:ScaleData.VisualBrush), RelativeSource={RelativeSource Self}}"
                        Stroke="Green" StrokeThickness="2">
             </Rectangle>
             <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="10"
