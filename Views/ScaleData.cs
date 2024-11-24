@@ -13,6 +13,8 @@ namespace ImagesScale.Views
     {
         protected override Freezable CreateInstanceCore() => new ScaleData();
 
+        protected override bool FreezeCore(bool isChecking) => false;
+
         public FrameworkElement Visual
         {
             get { return (FrameworkElement)GetValue(VisualProperty); }

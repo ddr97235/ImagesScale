@@ -6,7 +6,6 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <views:ScaleData x:Key="sd"
-                         Visual="{Binding ElementName=example}"
                          Scale="1"/>
     </Application.Resources>
 </Application>
