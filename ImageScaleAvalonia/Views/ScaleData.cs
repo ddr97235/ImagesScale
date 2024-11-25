@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ImageScaleAvalonia.Views
 {
-    public partial class ScaleData : Control/*: Freezable*/
+    public partial class ScaleData : AvaloniaObject
     {
         public static readonly StyledProperty<string> MyProperty =
         AvaloniaProperty.Register<ScaleData, string>(
@@ -28,20 +28,16 @@ namespace ImageScaleAvalonia.Views
             return value;
         }
 
-        private static void OnMyChanged(Control element, AvaloniaPropertyChangedEventArgs e)
+        private static void OnMyChanged(ScaleData element, AvaloniaPropertyChangedEventArgs e)
         {
             if (e.NewValue != null)
             {
             }
         }
 
-        private static void OnVisualChanged(Control element, AvaloniaPropertyChangedEventArgs e)
+        private static void OnVisualChanged(ScaleData element, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.NewValue is UserControl frame && element is ScaleData datahelper)
-            {
-                var image = frame.GetControl<Image>("MainCameraImage");
-                datahelper.Visual = image;
-            }
+
         }
 
         public static readonly StyledProperty<Visual> VisualProperty =
@@ -55,10 +51,10 @@ namespace ImageScaleAvalonia.Views
 
 
 
-        public ScaleData()
+        static ScaleData()
         {
-            MyProperty.Changed.AddClassHandler<Control>(OnMyChanged);
-            VisualProperty.Changed.AddClassHandler<Control>(OnVisualChanged);
+            MyProperty.Changed.AddClassHandler<ScaleData>(OnMyChanged);
+            VisualProperty.Changed.AddClassHandler<ScaleData>(OnVisualChanged);
 
         }
     }
