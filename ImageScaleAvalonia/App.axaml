@@ -8,7 +8,6 @@
     <Application.Styles>
         <FluentTheme />
 		<Style Selector="views|ScaleData">
-			<Setter Property="IsVisible" Value="True"/>
 			<Setter Property="Visual" Value="{Binding $parent[views:MainView]}"/>
 			<!--<Setter Property="My" Value="39 попугаев"/>-->
 		</Style>

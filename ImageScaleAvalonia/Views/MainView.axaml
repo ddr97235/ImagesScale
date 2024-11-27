@@ -3,7 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:ImageScaleAvalonia.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:views="using:ImageScaleAvalonia.Views"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ImageScaleAvalonia.Views.MainView"
              x:DataType="vm:MainViewModel">
   <Design.DataContext>
@@ -11,11 +12,12 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
-	<Grid>
-		<ContentControl Content="{StaticResource sd}"/>
+	<Grid>		
 		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		<StackPanel>
-			<Image x:Name="MainCameraImage"/>
+			<Image x:Name="MainCameraImage"
+				   views:ScaleData.ScaleDataValue="{StaticResource sd}"
+				   />
 			<TextBlock Text="{Binding My, Source={StaticResource sd}}" Margin="20"/>
 		</StackPanel>
 	</Grid>

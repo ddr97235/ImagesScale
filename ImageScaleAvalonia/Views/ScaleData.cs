@@ -50,12 +50,47 @@ namespace ImageScaleAvalonia.Views
         }
 
 
+        public static readonly AttachedProperty<ScaleData> ScaleDataValueProperty =
+            AvaloniaProperty.RegisterAttached<Grid, Control, ScaleData>("ScaleDataValue");
 
-        static ScaleData()
+        public static void SetScaleDataValue(Control element, ScaleData value)
+        {
+            _ = element ?? throw new ArgumentNullException(nameof(element));
+            element.SetValue(ScaleDataValueProperty, value);
+        }
+        public static ScaleData GetScaleDataValue(Control element)
+        {
+            _ = element ?? throw new ArgumentNullException(nameof(element));
+            return element.GetValue(ScaleDataValueProperty);
+        }
+
+        private static void OnScaleDataPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is ScaleData scaleData && d is Control control)
+            {
+                scaleData.Visual = control;
+                control.DataContextChanged += scaleData.OnDataContextChanged;
+
+                //control.AttachedToVisualTree += 
+            }
+        }
+
+        private void OnDataContextChanged(object? sender, EventArgs e)
+        {
+
+        }
+
+        /*static*/
+        public ScaleData()
         {
             MyProperty.Changed.AddClassHandler<ScaleData>(OnMyChanged);
             VisualProperty.Changed.AddClassHandler<ScaleData>(OnVisualChanged);
 
+        }
+
+        static ScaleData()
+        {
+            ScaleDataValueProperty.Changed.AddClassHandler<Control>(OnScaleDataPropertyChanged);
         }
     }
 }
