@@ -28,7 +28,7 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <Rectangle Fill="LightBlue"/>
-        <Image Source="{Binding ImageSource}"
+        <Image Source="{Binding FrameData, Converter={views:BytesToWriteableBitmap}}"
                Stretch="Uniform"
                views:ScaleData.ScaleData="{DynamicResource sd}">
             <cc:DecoratorAdoner.Child>
@@ -59,6 +59,15 @@
                           IsChecked="{Binding Scale, ConverterParameter=10, Converter={views:ScaleValueToIndex}, Source={StaticResource sd}}"/>
 
             <TextBlock Text="{Binding ViewboxAbsolute, Source={StaticResource sd}}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="Выбора отображемых кадров по типу id" HorizontalAlignment="Center" Margin="0"/>
+            <RadioButton  Content="Все" GroupName="FrameId"
+                          IsChecked="{Binding IsEvenNumberId, ConverterParameter=All, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
+            <RadioButton  Content="Только четные" GroupName="FrameId"
+                          IsChecked="{Binding IsEvenNumberId, ConverterParameter=Even, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
+            <RadioButton  Content="Только не четные" GroupName="FrameId"
+                          IsChecked="{Binding IsEvenNumberId, ConverterParameter=NotEven, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Grid.Column="2" ClipToBounds="True">

@@ -15,6 +15,7 @@ using Windows.Devices.Enumeration;
 using System.Diagnostics;
 using System.Windows.Controls;
 using Windows.Media.MediaProperties;
+using Windows.Gaming.Input;
 
 namespace ImagesScale.Models
 {
@@ -22,12 +23,13 @@ namespace ImagesScale.Models
     {
         private MediaCapture? mediaCapture;
         private MediaFrameReader? mediaFrameReader;
-        private event Action<SoftwareBitmap, System.Drawing.Size>? newFrame;
+        private event Action<byte[], System.Drawing.Size, int>? newFrame;
         private bool isColor = false;
+        private int frameId = 0;
         public bool IsCameraAvailable { get; private set; } = false;
         private async Task<List<(string Name, string ID, Guid Guid)>> GetCameraList() => (await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture)).Select(x => (x.Name, x.Id, (Guid)x.Properties["System.Devices.ContainerId"])).ToList();
         
-        public CameraWinRT(Action<SoftwareBitmap, System.Drawing.Size>? NewFrame, bool IsColor = false)
+        public CameraWinRT(Action<byte[], System.Drawing.Size, int>? NewFrame, bool IsColor = false)
         {
             newFrame = NewFrame;
             isColor = IsColor;
@@ -148,7 +150,7 @@ namespace ImagesScale.Models
                         using (SoftwareBitmap colorSoftBitmap = SoftwareBitmap.Convert(videoMediaFrame.SoftwareBitmap /*softBitmap*/, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied))
                         {
                             System.Drawing.Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
-                            newFrame?.Invoke(colorSoftBitmap, imagesize);
+                            //newFrame?.Invoke(colorSoftBitmap, imagesize);
                         }
                         return;
                     }
@@ -161,13 +163,13 @@ namespace ImagesScale.Models
                             using (SoftwareBitmap colorSoftBitmap = SoftwareBitmap.Convert(softBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied))
                             {
                                 System.Drawing.Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
-                                newFrame?.Invoke(colorSoftBitmap, imagesize);
+                                //newFrame?.Invoke(colorSoftBitmap, imagesize);
                             }
                         }
                         else
                         {
                             System.Drawing.Size imagesize = new(softBitmap.PixelWidth, softBitmap.PixelHeight);
-                            newFrame?.Invoke(softBitmap, imagesize);
+                            newFrame?.Invoke(GetFrame(softBitmap), imagesize, ++frameId);
                         }
                     }
                 }
@@ -217,6 +219,23 @@ namespace ImagesScale.Models
         unsafe interface IMemoryBufferByteAccess
         {
             void GetBuffer(out byte* buffer, out uint capacity);
+        }
+
+        private static unsafe byte[] GetFrame(SoftwareBitmap softwareBitmap)
+        {
+            byte[] res = new byte[softwareBitmap.PixelWidth * softwareBitmap.PixelHeight];
+            using (BitmapBuffer buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Read))
+            using (var reference = buffer.CreateReference())
+            {
+                byte* data;
+                uint capacity;
+                reference.As<IMemoryBufferByteAccess>().GetBuffer(out data, out capacity);
+                fixed (byte* pSource = res)
+                {
+                    Buffer.MemoryCopy(data, pSource, res.Length, res.Length);
+                }
+                return res;
+            }
         }
     }
 }

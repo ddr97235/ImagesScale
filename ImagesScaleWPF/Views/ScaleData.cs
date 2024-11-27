@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,11 +43,19 @@ namespace ImagesScale.Views
             }
             if (e.NewValue is FrameworkElement @new)
             {
+                @new.DataContextChanged += sd.OnDataContextChanged;
+
+
                 @new.MouseLeftButtonDown += sd.OnMouseClick;
                 widthDescriptor.AddValueChanged(@new, sd.OnSizeChanged);
                 heightDescriptor.AddValueChanged(@new, sd.OnSizeChanged);
                 sd.OnRenderViewBox();
             }
+        }
+
+        private  void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // Создаем привязку            
         }
 
         private void OnSizeChanged(object? sender, EventArgs e)
@@ -376,5 +385,26 @@ namespace ImagesScale.Views
                                                         }
                                                     }
                                                 });
+        public bool? IsEvenNumberId
+        {
+            get { return (bool?)GetValue(IsEvenNumberIdProperty); }
+            set { SetValue(IsEvenNumberIdProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Visual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsEvenNumberIdProperty =
+            DependencyProperty.Register(nameof(IsEvenNumberId),
+                                        typeof(bool?),
+                                        typeof(ScaleData),
+                                        new PropertyMetadata(null)
+                                        {
+                                            PropertyChangedCallback = (d, e) =>
+                                            {
+
+                                            }
+                                        });
+
+
     }
+
 }

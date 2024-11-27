@@ -6,6 +6,7 @@
              StartupUri="/MainWindow.xaml">
    <Application.Resources>
         <views:ScaleData x:Key="sd"
-                         Scale="1"/>
+                         Scale="1"
+                         IsEvenNumberId="True"/>
     </Application.Resources>
 </Application>
