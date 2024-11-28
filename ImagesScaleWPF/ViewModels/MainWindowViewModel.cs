@@ -11,7 +11,7 @@ namespace ImagesScale.ViewModels
     {       
         public MainWindowViewModel()
         {           
-            camera = new(OnNewFrame);
+            camera = new(OnNewFrame,true);
             camera.Start();
             if(!camera.IsCameraAvailable)
             {

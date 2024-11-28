@@ -16,6 +16,10 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using Windows.Media.MediaProperties;
 using Windows.Gaming.Input;
+using System.IO;
+using Windows.Storage.Streams;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace ImagesScale.Models
 {
@@ -163,7 +167,8 @@ namespace ImagesScale.Models
                             using (SoftwareBitmap colorSoftBitmap = SoftwareBitmap.Convert(softBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied))
                             {
                                 System.Drawing.Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
-                                //newFrame?.Invoke(colorSoftBitmap, imagesize);
+                                var jpeg = await ConvertSoftwareBitmapToJpegBytes(colorSoftBitmap);
+                                newFrame?.Invoke(jpeg, imagesize, ++frameId);
                             }
                         }
                         else
@@ -232,10 +237,37 @@ namespace ImagesScale.Models
                 reference.As<IMemoryBufferByteAccess>().GetBuffer(out data, out capacity);
                 fixed (byte* pSource = res)
                 {
-                    Buffer.MemoryCopy(data, pSource, res.Length, res.Length);
+                    System.Buffer.MemoryCopy(data, pSource, res.Length, res.Length);
                 }
                 return res;
             }
         }
+
+        private static async Task<byte[]> ConvertSoftwareBitmapToJpegBytes(SoftwareBitmap softwareBitmap)
+        {
+            using (var memoryStream = new InMemoryRandomAccessStream())
+            {
+                // Создаем BitmapEncoder для JPEG
+                var encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.JpegEncoderId, memoryStream);
+
+                // Устанавливаем SoftwareBitmap
+                encoder.SetSoftwareBitmap(softwareBitmap);
+
+                // Сохраняем
+                await encoder.FlushAsync();
+
+                // Получаем массив байтов из MemoryStream
+                using (var stream = memoryStream.AsStreamForRead())
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(ms);
+                        //File.WriteAllBytes("123.jpg", ms.ToArray()); // проверено!!!
+                        return ms.ToArray();
+                    }
+                }
+            }
+        }
+
     }
 }
