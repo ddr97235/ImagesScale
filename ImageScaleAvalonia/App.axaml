@@ -7,10 +7,6 @@
 
     <Application.Styles>
         <FluentTheme />
-		<Style Selector="views|ScaleData">
-			<Setter Property="Visual" Value="{Binding $parent[views:MainView]}"/>
-			<!--<Setter Property="My" Value="39 попугаев"/>-->
-		</Style>
     </Application.Styles>
 	<Application.Resources>
 		<views:ScaleData x:Key="sd" My="38 попугаев"/>

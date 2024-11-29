@@ -12,13 +12,34 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
-	<Grid>		
-		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<StackPanel>
-			<Image x:Name="MainCameraImage"
+	<UserControl.Resources>
+		<views:BoolToEvenNumber x:Key="boolToEvenNumber"/>
+	</UserControl.Resources>
+	<Grid ColumnDefinitions="2*,0.2*,*" RowDefinitions="2*,*,0.2*" ShowGridLines="True">		
+		<!--<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+		<Image x:Name="MainCameraImage"
+				   ClipToBounds="True"
 				   views:ScaleData.ScaleDataValue="{StaticResource sd}"
-				   />
-			<TextBlock Text="{Binding My, Source={StaticResource sd}}" Margin="20"/>
+				   Source="{Binding BitmapData, Source={StaticResource sd}}"
+				   >
+			<AdornerLayer.Adorner>
+				<Border BorderBrush="Red"  BorderThickness="2"/>
+			</AdornerLayer.Adorner>
+		</Image>
+
+		<StackPanel Grid.Column="2" Margin="10">
+			<TextBlock Text="{Binding FrameID, StringFormat=Frame ID: {0},Source={StaticResource sd}}"/>
+			<TextBlock Text="{Binding FPSCamera, StringFormat=Camera FPS: {0},Source={StaticResource sd}}"/>
+			<TextBlock Text="{Binding FPS_UI, StringFormat=UI FPS: {0},Source={StaticResource sd}}"/>
 		</StackPanel>
+		<StackPanel Grid.Row="1">
+            <TextBlock Text="Выбора отображемых кадров по типу id" HorizontalAlignment="Center" Margin="0"/>
+            <RadioButton  Content="Все" GroupName="FrameId"
+                          IsChecked="{Binding IsEvenNumberId, ConverterParameter=All, Converter={StaticResource boolToEvenNumber}, Source={StaticResource sd}}"/>
+            <RadioButton  Content="Только четные" GroupName="FrameId"
+                          IsChecked="{Binding IsEvenNumberId, ConverterParameter=Even, Converter={StaticResource boolToEvenNumber}, Source={StaticResource sd}}"/>
+            <RadioButton  Content="Только нечетные" GroupName="FrameId"
+                          IsChecked="{Binding IsEvenNumberId, ConverterParameter=NotEven, Converter={StaticResource boolToEvenNumber}, Source={StaticResource sd}}"/>
+        </StackPanel>
 	</Grid>
 </UserControl>

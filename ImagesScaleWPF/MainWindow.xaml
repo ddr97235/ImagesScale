@@ -66,7 +66,7 @@
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=All, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
             <RadioButton  Content="Только четные" GroupName="FrameId"
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=Even, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
-            <RadioButton  Content="Только не четные" GroupName="FrameId"
+            <RadioButton  Content="Только нечетные" GroupName="FrameId"
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=NotEven, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
         </StackPanel>
 
