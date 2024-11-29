@@ -4,6 +4,7 @@ using ImagesScale.Models;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Windows.Graphics.Imaging;
+using ImageScaleModels;
 
 namespace ImagesScale.ViewModels
 {

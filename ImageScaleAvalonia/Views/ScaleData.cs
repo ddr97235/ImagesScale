@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Data;
 
 namespace ImageScaleAvalonia.Views
 {
@@ -77,14 +78,30 @@ namespace ImageScaleAvalonia.Views
 
         private void OnDataContextChanged(object? sender, EventArgs e)
         {
+            var binding = new Binding { Source = (sender as Control).DataContext, Path = "FrameVM" };
+            Bind(FrameProperty, binding);
+        }
+
+        private static readonly StyledProperty<object> FrameProperty =
+            AvaloniaProperty.Register<ScaleData, object>(nameof(FrameProperty));
+
+        private object Frame
+        {
+            get => GetValue(FrameProperty);
+            set => SetValue(FrameProperty, value);
+        }
+
+        private static void OnFrameChanged(ScaleData element, AvaloniaPropertyChangedEventArgs e)
+        {
 
         }
 
-        /*static*/
+
         public ScaleData()
         {
             MyProperty.Changed.AddClassHandler<ScaleData>(OnMyChanged);
             VisualProperty.Changed.AddClassHandler<ScaleData>(OnVisualChanged);
+            FrameProperty.Changed.AddClassHandler<ScaleData>(OnFrameChanged);
 
         }
 

@@ -4,26 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
-using System.Windows.Media.Imaging;
+//using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
 using WinRT;
 using System.Windows;
-using System.Windows.Media;
+//using System.Windows.Media;
 using Windows.Media.Capture.Frames;
 using Windows.Media.Capture;
 using Windows.Devices.Enumeration;
 using System.Diagnostics;
-using System.Windows.Controls;
+//using System.Windows.Controls;
 using Windows.Media.MediaProperties;
 using Windows.Gaming.Input;
 using System.IO;
 using Windows.Storage.Streams;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+//using System.Windows.Navigation;
+//using System.Windows.Shapes;
 
-namespace ImagesScale.Models
+namespace ImageScaleModels
 {
-    internal class CameraWinRT
+    public class CameraWinRT
     {
         private MediaCapture? mediaCapture;
         private MediaFrameReader? mediaFrameReader;
@@ -190,34 +190,34 @@ namespace ImagesScale.Models
                 mediaFrameReader = null;
             }
         }
-        public unsafe WriteableBitmap SoftwareBitmapToWriteableBitmap(SoftwareBitmap softwareBitmap)
-        {
-            WriteableBitmap writeableBitmap = new WriteableBitmap(softwareBitmap.PixelWidth, softwareBitmap.PixelHeight, 96, 96, BitmapPixelFormatToPixelFormat(softwareBitmap.BitmapPixelFormat) /*PixelFormats.Gray8*/, null);
-            using (BitmapBuffer buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Read))
-            using (var reference = buffer.CreateReference())
-            {
-                byte* data;
-                uint capacity;
-                reference.As<IMemoryBufferByteAccess>().GetBuffer(out data, out capacity);
-                //var desc = buffer.GetPlaneDescription(0);
-                byte[] pixels = new byte[softwareBitmap.PixelWidth * softwareBitmap.PixelHeight * (writeableBitmap.Format.BitsPerPixel / 8)];
-                Marshal.Copy((IntPtr)data, pixels, 0, pixels.Length);
-                Int32Rect rect = new Int32Rect(0, 0, softwareBitmap.PixelWidth, softwareBitmap.PixelHeight);
-                writeableBitmap.WritePixels(rect, pixels, writeableBitmap.BackBufferStride, 0);
-            }
-            return writeableBitmap;
-        }
-        private static PixelFormat BitmapPixelFormatToPixelFormat(BitmapPixelFormat bitmapPixelFormat)
-        {
-            switch (bitmapPixelFormat)
-            {
-                case BitmapPixelFormat.Nv12:
-                    return PixelFormats.Gray8;
-                case BitmapPixelFormat.Bgra8:
-                    return PixelFormats.Bgra32;
-                default: throw new Exception("BitmapPixelFormatToPixelFormat не является универсальной функцией, и поддерживает только Bgra8 и Nv12(условно)");
-            }
-        }
+        //public unsafe WriteableBitmap SoftwareBitmapToWriteableBitmap(SoftwareBitmap softwareBitmap)
+        //{
+        //    WriteableBitmap writeableBitmap = new WriteableBitmap(softwareBitmap.PixelWidth, softwareBitmap.PixelHeight, 96, 96, BitmapPixelFormatToPixelFormat(softwareBitmap.BitmapPixelFormat) /*PixelFormats.Gray8*/, null);
+        //    using (BitmapBuffer buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Read))
+        //    using (var reference = buffer.CreateReference())
+        //    {
+        //        byte* data;
+        //        uint capacity;
+        //        reference.As<IMemoryBufferByteAccess>().GetBuffer(out data, out capacity);
+        //        //var desc = buffer.GetPlaneDescription(0);
+        //        byte[] pixels = new byte[softwareBitmap.PixelWidth * softwareBitmap.PixelHeight * (writeableBitmap.Format.BitsPerPixel / 8)];
+        //        Marshal.Copy((IntPtr)data, pixels, 0, pixels.Length);
+        //        Int32Rect rect = new Int32Rect(0, 0, softwareBitmap.PixelWidth, softwareBitmap.PixelHeight);
+        //        writeableBitmap.WritePixels(rect, pixels, writeableBitmap.BackBufferStride, 0);
+        //    }
+        //    return writeableBitmap;
+        //}
+        //private static PixelFormat BitmapPixelFormatToPixelFormat(BitmapPixelFormat bitmapPixelFormat)
+        //{
+        //    switch (bitmapPixelFormat)
+        //    {
+        //        case BitmapPixelFormat.Nv12:
+        //            return PixelFormats.Gray8;
+        //        case BitmapPixelFormat.Bgra8:
+        //            return PixelFormats.Bgra32;
+        //        default: throw new Exception("BitmapPixelFormatToPixelFormat не является универсальной функцией, и поддерживает только Bgra8 и Nv12(условно)");
+        //    }
+        //}
         [ComImport]
         [Guid("5b0d3235-4dba-4d44-865e-8f1d0e4fd04d")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
