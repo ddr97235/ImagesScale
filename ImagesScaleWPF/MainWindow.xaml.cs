@@ -20,4 +20,12 @@ namespace ImagesScale
             await vm.Start();
         }
     }
+
+    internal class MainWindowViewModelDesign : MainWindowViewModel
+    {
+        public MainWindowViewModelDesign()
+        {
+            _ = Start();
+        }
+    }
 }

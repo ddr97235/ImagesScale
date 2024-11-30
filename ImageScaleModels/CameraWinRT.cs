@@ -50,7 +50,7 @@ namespace ImageScaleModels
             isColor = IsColor;
         }
 
-        public async Task Start()
+        public async Task Start() => await Task.Run(async () =>
         {
             var ListCamera = await GetCameraList();
             if (ListCamera.Count > 0)
@@ -74,7 +74,7 @@ namespace ImageScaleModels
             {
                 IsCameraAvailable = false;
             }
-        }
+        });
 
         private async Task InitializeCameraAsync(string ID)
         {

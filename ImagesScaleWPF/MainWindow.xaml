@@ -11,6 +11,9 @@
         xmlns:cc="clr-namespace:WpfCustomControlsCore"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <d:Window.DataContext>
+        <local:MainWindowViewModelDesign/>
+    </d:Window.DataContext>
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
@@ -28,7 +31,7 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <Rectangle Fill="LightBlue"/>
-        <Image Source="{Binding FrameData, Converter={views:BytesToWriteableBitmap}}"
+        <Image Source="{Binding FrameData.Frame}"
                Stretch="Uniform"
                views:ScaleData.ScaleData="{DynamicResource sd}">
             <cc:DecoratorAdoner.Child>
