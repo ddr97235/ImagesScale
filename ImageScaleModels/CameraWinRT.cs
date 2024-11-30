@@ -1,31 +1,18 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 
-//using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
-//using System.Windows.Media;
+
 using Windows.Media.Capture.Frames;
-//using System.Windows.Controls;
 using Windows.Media.MediaProperties;
 using Windows.Storage.Streams;
 using WinRT;
-//using System.Windows.Navigation;
-//using System.Windows.Shapes;
 
 namespace ImageScaleModels
 {
-
-    public class FrameEventArgs(byte[] frame, Size size, int frameId) : EventArgs
-    {
-        public byte[] Frame { get; } = frame;
-        public Size Size { get; } = size;
-
-        public int FrameId { get; } = frameId;
-    }
-
 
     public class CameraWinRT
     {
@@ -39,15 +26,24 @@ namespace ImageScaleModels
 
         private MediaCapture? mediaCapture;
         private MediaFrameReader? mediaFrameReader;
-        //private event Action<byte[], System.Drawing.Size, int>? newFrame;
-        private bool isColor = false;
+        private readonly bool isColor = false;
         private int frameId = 0;
+
         public bool IsCameraAvailable { get; private set; } = false;
+
+        public event EventHandler? IsCameraAvailableChanged;
+
+        private void OnIsCameraAvailableChanged(bool isAvailable)
+        {
+            IsCameraAvailable = isAvailable;
+            IsCameraAvailableChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         private async Task<List<(string Name, string ID, Guid Guid)>> GetCameraList() => (await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture)).Select(x => (x.Name, x.Id, (Guid)x.Properties["System.Devices.ContainerId"])).ToList();
 
-        public CameraWinRT(/*Action<byte[], System.Drawing.Size, int>? NewFrame,*/ bool IsColor = false)
+        public CameraWinRT(bool isColor = false)
         {
-            isColor = IsColor;
+            this.isColor = isColor;
         }
 
         public async Task Start() => await Task.Run(async () =>
@@ -68,11 +64,11 @@ namespace ImageScaleModels
                 finally { }
                 await InitializeFrameReaderAsync();
 
-                IsCameraAvailable = true;
+                OnIsCameraAvailableChanged(true);
             }
             else
             {
-                IsCameraAvailable = false;
+                OnIsCameraAvailableChanged(false);
             }
         });
 
@@ -81,18 +77,16 @@ namespace ImageScaleModels
             var settings = new MediaCaptureInitializationSettings
             {
                 VideoDeviceId = ID,
-                //  MemoryPreference = MediaCaptureMemoryPreference.Cpu,
                 SharingMode = MediaCaptureSharingMode.ExclusiveControl,
                 StreamingCaptureMode = StreamingCaptureMode.Video
             };
             try // Initialize MediaCapture
             {
                 await mediaCapture?.InitializeAsync(settings);
-                //mediaCapture.CaptureDeviceExclusiveControlStatusChanged += CaptureDeviceExclusiveControlStatusChanged;// только после инициализации. ДО-нельзя.
             }
             catch (UnauthorizedAccessException)
-            { // если нет доступа камере при запуски приложения
-
+            { 
+                // если нет доступа камере при запуски приложения
                 Debug.WriteLine("Нет доступа к камере.");
             }
             finally { }
@@ -115,7 +109,6 @@ namespace ImageScaleModels
                         await StopmediaFrameReader();
                         break;
                     case MediaFrameReaderStartStatus.Success:
-                        //mediaCapture.CaptureDeviceExclusiveControlStatusChanged -= CaptureDeviceExclusiveControlStatusChanged; // отсюда не убирать!                        
                         break;
                     default:
                         Debug.WriteLine("Неизвестная ошибка инициализации видеопотока камеры. Ошибка: " + status.ToString());

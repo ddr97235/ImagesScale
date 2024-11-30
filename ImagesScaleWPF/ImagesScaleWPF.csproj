@@ -10,11 +10,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\DataController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Images\free-icon-no-photo-red.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ImageScaleModels\ImageScaleModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\free-icon-no-photo-red.png" />
   </ItemGroup>
 
 </Project>

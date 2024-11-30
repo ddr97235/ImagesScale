@@ -31,18 +31,32 @@
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <Rectangle Fill="LightBlue"/>
-        <Image Source="{Binding FrameData.Frame}"
-               Stretch="Uniform"
-               views:ScaleData.ScaleData="{DynamicResource sd}">
-            <cc:DecoratorAdoner.Child>
-                <Path Stroke="Red" StrokeThickness="4">
-                    <Path.Data>
-                        <RectangleGeometry Rect="{Binding ViewboxAbsolute, Source={StaticResource sd}}"
+        <Image Stretch="Uniform"
+                views:ScaleData.ScaleData="{DynamicResource sd}">
+            <Image.Style>
+                <Style TargetType="Image">
+                    <Setter Property="Source" Value="{Binding FrameData.Frame}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding FrameData.Frame.Length}" Value="0">
+                            <Setter Property="Source" Value="/Images/free-icon-no-photo-red.png"/>
+                        </DataTrigger>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Setter Property="cc:DecoratorAdoner.Child">
+                                <Setter.Value>
+                                    <Path Stroke="Red" StrokeThickness="4">
+                                        <Path.Data>
+                                            <RectangleGeometry Rect="{Binding ViewboxAbsolute, Source={StaticResource sd}}"
                                            RadiusX="10" RadiusY="10"/>
-                    </Path.Data>
-                </Path>
-            </cc:DecoratorAdoner.Child>
+                                        </Path.Data>
+                                    </Path>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Image.Style>
         </Image>
+
 
         <StackPanel Grid.Column="2" >
             <TextBlock Text="Выбора масштаба" HorizontalAlignment="Center" Margin="20"/>

@@ -1,10 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using ImagesScale.Models;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using Windows.Graphics.Imaging;
 using ImageScaleModels;
+using System.Drawing;
 
 namespace ImagesScale.ViewModels
 {
@@ -14,22 +10,17 @@ namespace ImagesScale.ViewModels
         {
             camera = new(true);
             camera.FrameChanged += OnNewFrame;
-            //camera.Start();
+            camera.IsCameraAvailableChanged += OnIsCameraAvailable;
+        }
 
-            //if (!camera.IsCameraAvailable)
-            //{
-            //    ErrorText = "Камере недоступна. Отсутсвует. Или занята.";
-            //}
+        private void OnIsCameraAvailable(object? sender, EventArgs e)
+        {
+            ErrorText = camera.IsCameraAvailable ? string.Empty : "Камера недоступна: отсутсвует или занята.";
         }
 
         public async Task Start()
         {
             await camera.Start();
-
-            if (!camera.IsCameraAvailable)
-            {
-                ErrorText = "Камере недоступна. Отсутсвует. Или занята.";
-            }
         }
 
         private void OnNewFrame(object? sender, FrameEventArgs e)
@@ -37,18 +28,11 @@ namespace ImagesScale.ViewModels
             FrameData = e;
         }
 
-        private CameraWinRT camera;
-        //private void OnNewFrame(/*SoftwareBitmap softwareBitmap*/byte[] data, System.Drawing.Size imagesize, int frameID) => FrameData = (data, imagesize, frameID) ;
-        //{
-        //    dataController.UpdateImageSize(imagesize);
-        //    Application.Current?.Dispatcher.Invoke((ThreadStart)delegate
-        //    {
-        //        ImageSource = camera.SoftwareBitmapToWriteableBitmap(softwareBitmap);
-        //    });
-        //}
+        private readonly CameraWinRT camera;
 
+        private static readonly FrameEventArgs emptyFrame = new([], Size.Empty, -1);
         [ObservableProperty]
-        private FrameEventArgs? _frameData;
+        private FrameEventArgs _frameData = emptyFrame;
 
         [ObservableProperty]
         private string _errorText = string.Empty;
