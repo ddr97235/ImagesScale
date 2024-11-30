@@ -295,7 +295,7 @@ namespace ImagesScale.Views
                 };
 
                 BindingOperations.SetBinding(brush, VisualBrush.VisualProperty, new Binding() { Path = new PropertyPath(VisualProperty), Source = sd });
-                BindingOperations.SetBinding(brush, VisualBrush.ViewboxProperty, new Binding() { Path = new PropertyPath(ViewboxRelativeProperty), Source = sd });
+                BindingOperations.SetBinding(brush, TileBrush.ViewboxProperty, new Binding() { Path = new PropertyPath(ViewboxRelativeProperty), Source = sd });
 
                 SetVisualBrush(fe, brush);
             }

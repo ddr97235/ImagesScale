@@ -1,45 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
+﻿using System.Diagnostics;
+using System.Drawing;
+
 //using System.Windows.Media.Imaging;
 using System.Runtime.InteropServices;
-using WinRT;
-using System.Windows;
+using Windows.Devices.Enumeration;
+using Windows.Graphics.Imaging;
+using Windows.Media.Capture;
 //using System.Windows.Media;
 using Windows.Media.Capture.Frames;
-using Windows.Media.Capture;
-using Windows.Devices.Enumeration;
-using System.Diagnostics;
 //using System.Windows.Controls;
 using Windows.Media.MediaProperties;
-using Windows.Gaming.Input;
-using System.IO;
 using Windows.Storage.Streams;
+using WinRT;
 //using System.Windows.Navigation;
 //using System.Windows.Shapes;
 
 namespace ImageScaleModels
 {
+
+    public class FrameEventArgs(byte[] frame, Size size, int frameId) : EventArgs
+    {
+        public byte[] Frame { get; } = frame;
+        public Size Size { get; } = size;
+
+        public int FrameId { get; } = frameId;
+    }
+
+
     public class CameraWinRT
     {
+
+        public event EventHandler<FrameEventArgs>? FrameChanged;
+
+        private void OnFrameChanged(byte[] frame, Size size, int frameId)
+        {
+            FrameChanged?.Invoke(this, new FrameEventArgs(frame, size, frameId));
+        }
+
         private MediaCapture? mediaCapture;
         private MediaFrameReader? mediaFrameReader;
-        private event Action<byte[], System.Drawing.Size, int>? newFrame;
+        //private event Action<byte[], System.Drawing.Size, int>? newFrame;
         private bool isColor = false;
         private int frameId = 0;
         public bool IsCameraAvailable { get; private set; } = false;
         private async Task<List<(string Name, string ID, Guid Guid)>> GetCameraList() => (await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture)).Select(x => (x.Name, x.Id, (Guid)x.Properties["System.Devices.ContainerId"])).ToList();
-        
-        public CameraWinRT(Action<byte[], System.Drawing.Size, int>? NewFrame, bool IsColor = false)
+
+        public CameraWinRT(/*Action<byte[], System.Drawing.Size, int>? NewFrame,*/ bool IsColor = false)
         {
-            newFrame = NewFrame;
             isColor = IsColor;
         }
 
-        public async void Start()
+        public async Task Start()
         {
             var ListCamera = await GetCameraList();
             if (ListCamera.Count > 0)
@@ -52,7 +63,7 @@ namespace ImageScaleModels
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Ошибка инициализации камеры: " + ex.Message);                    
+                    Debug.WriteLine("Ошибка инициализации камеры: " + ex.Message);
                 }
                 finally { }
                 await InitializeFrameReaderAsync();
@@ -81,10 +92,10 @@ namespace ImageScaleModels
             }
             catch (UnauthorizedAccessException)
             { // если нет доступа камере при запуски приложения
-           
+
                 Debug.WriteLine("Нет доступа к камере.");
             }
-            finally{}
+            finally { }
         }
 
         private async Task InitializeFrameReaderAsync()
@@ -96,6 +107,7 @@ namespace ImageScaleModels
                 mediaFrameReader.FrameArrived += ColorFrameReader_FrameArrived;
                 mediaFrameReader.AcquisitionMode = MediaFrameReaderAcquisitionMode.Realtime;
                 var status = await mediaFrameReader.StartAsync();
+
                 switch (status)
                 {
                     case MediaFrameReaderStartStatus.ExclusiveControlNotAvailable:
@@ -112,9 +124,9 @@ namespace ImageScaleModels
             }
             catch (UnauthorizedAccessException)
             {
-                 Debug.WriteLine("The app was denied access to the camera");
+                Debug.WriteLine("The app was denied access to the camera");
             }
-            finally{}
+            finally { }
         }
 
         private IMediaEncodingProperties GetResolutionOrDefault(int width, int heigth, string mediaEncodingSubtypes = /*"MJPG"*/"NV12")
@@ -148,12 +160,12 @@ namespace ImageScaleModels
                     return; // сюда попадаем только во время отладки
                 }
                 using (Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface surface = videoMediaFrame!.Direct3DSurface)
-                {                    
+                {
                     if (surface == null)
                     {
                         using (SoftwareBitmap colorSoftBitmap = SoftwareBitmap.Convert(videoMediaFrame.SoftwareBitmap /*softBitmap*/, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied))
                         {
-                            System.Drawing.Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
+                            Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
                             //newFrame?.Invoke(colorSoftBitmap, imagesize);
                         }
                         return;
@@ -166,15 +178,18 @@ namespace ImageScaleModels
                         {
                             using (SoftwareBitmap colorSoftBitmap = SoftwareBitmap.Convert(softBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied))
                             {
-                                System.Drawing.Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
+                                Size imagesize = new(colorSoftBitmap.PixelWidth, colorSoftBitmap.PixelHeight);
                                 var jpeg = await ConvertSoftwareBitmapToJpegBytes(colorSoftBitmap);
-                                newFrame?.Invoke(jpeg, imagesize, ++frameId);
+                                //newFrame?.Invoke(jpeg, imagesize, ++frameId);
+                                OnFrameChanged(jpeg, imagesize, ++frameId);
                             }
                         }
                         else
                         {
-                            System.Drawing.Size imagesize = new(softBitmap.PixelWidth, softBitmap.PixelHeight);
-                            newFrame?.Invoke(GetFrame(softBitmap), imagesize, ++frameId);
+                            Size imagesize = new(softBitmap.PixelWidth, softBitmap.PixelHeight);
+                            byte[] jpeg = GetFrame(softBitmap);
+                            //newFrame?.Invoke(GetFrame(softBitmap), imagesize, ++frameId);
+                            OnFrameChanged(jpeg, imagesize, ++frameId);
                         }
                     }
                 }
@@ -190,34 +205,7 @@ namespace ImageScaleModels
                 mediaFrameReader = null;
             }
         }
-        //public unsafe WriteableBitmap SoftwareBitmapToWriteableBitmap(SoftwareBitmap softwareBitmap)
-        //{
-        //    WriteableBitmap writeableBitmap = new WriteableBitmap(softwareBitmap.PixelWidth, softwareBitmap.PixelHeight, 96, 96, BitmapPixelFormatToPixelFormat(softwareBitmap.BitmapPixelFormat) /*PixelFormats.Gray8*/, null);
-        //    using (BitmapBuffer buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Read))
-        //    using (var reference = buffer.CreateReference())
-        //    {
-        //        byte* data;
-        //        uint capacity;
-        //        reference.As<IMemoryBufferByteAccess>().GetBuffer(out data, out capacity);
-        //        //var desc = buffer.GetPlaneDescription(0);
-        //        byte[] pixels = new byte[softwareBitmap.PixelWidth * softwareBitmap.PixelHeight * (writeableBitmap.Format.BitsPerPixel / 8)];
-        //        Marshal.Copy((IntPtr)data, pixels, 0, pixels.Length);
-        //        Int32Rect rect = new Int32Rect(0, 0, softwareBitmap.PixelWidth, softwareBitmap.PixelHeight);
-        //        writeableBitmap.WritePixels(rect, pixels, writeableBitmap.BackBufferStride, 0);
-        //    }
-        //    return writeableBitmap;
-        //}
-        //private static PixelFormat BitmapPixelFormatToPixelFormat(BitmapPixelFormat bitmapPixelFormat)
-        //{
-        //    switch (bitmapPixelFormat)
-        //    {
-        //        case BitmapPixelFormat.Nv12:
-        //            return PixelFormats.Gray8;
-        //        case BitmapPixelFormat.Bgra8:
-        //            return PixelFormats.Bgra32;
-        //        default: throw new Exception("BitmapPixelFormatToPixelFormat не является универсальной функцией, и поддерживает только Bgra8 и Nv12(условно)");
-        //    }
-        //}
+
         [ComImport]
         [Guid("5b0d3235-4dba-4d44-865e-8f1d0e4fd04d")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -248,7 +236,7 @@ namespace ImageScaleModels
             using (var memoryStream = new InMemoryRandomAccessStream())
             {
                 // Создаем BitmapEncoder для JPEG
-                var encoder = await Windows.Graphics.Imaging.BitmapEncoder.CreateAsync(Windows.Graphics.Imaging.BitmapEncoder.JpegEncoderId, memoryStream);
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
 
                 // Устанавливаем SoftwareBitmap
                 encoder.SetSoftwareBitmap(softwareBitmap);

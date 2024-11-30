@@ -8,19 +8,37 @@ using ImageScaleModels;
 
 namespace ImagesScale.ViewModels
 {
-    public partial class MainWindowViewModel: ObservableObject
-    {       
+    public partial class MainWindowViewModel : ObservableObject
+    {
         public MainWindowViewModel()
-        {           
-            camera = new(OnNewFrame,true);
-            camera.Start();
-            if(!camera.IsCameraAvailable)
+        {
+            camera = new(true);
+            camera.FrameChanged += OnNewFrame;
+            //camera.Start();
+
+            //if (!camera.IsCameraAvailable)
+            //{
+            //    ErrorText = "Камере недоступна. Отсутсвует. Или занята.";
+            //}
+        }
+
+        public async Task Start()
+        {
+            await camera.Start();
+
+            if (!camera.IsCameraAvailable)
             {
                 ErrorText = "Камере недоступна. Отсутсвует. Или занята.";
             }
         }
+
+        private void OnNewFrame(object? sender, FrameEventArgs e)
+        {
+            FrameData = e;
+        }
+
         private CameraWinRT camera;
-        private void OnNewFrame(/*SoftwareBitmap softwareBitmap*/byte[] data, System.Drawing.Size imagesize, int frameID) => FrameData = (data, imagesize, frameID) ;
+        //private void OnNewFrame(/*SoftwareBitmap softwareBitmap*/byte[] data, System.Drawing.Size imagesize, int frameID) => FrameData = (data, imagesize, frameID) ;
         //{
         //    dataController.UpdateImageSize(imagesize);
         //    Application.Current?.Dispatcher.Invoke((ThreadStart)delegate
@@ -30,9 +48,9 @@ namespace ImagesScale.ViewModels
         //}
 
         [ObservableProperty]
-        private (byte[] Data, System.Drawing.Size Imagesize, int FrameID)? _FrameData;
-       
+        private FrameEventArgs? _frameData;
+
         [ObservableProperty]
-        private string _ErrorText = String.Empty;
+        private string _errorText = string.Empty;
     }
 }
