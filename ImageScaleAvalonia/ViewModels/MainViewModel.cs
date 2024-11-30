@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ImageScaleModels;
+using System.Threading.Tasks;
 
 namespace ImageScaleAvalonia.ViewModels;
 
@@ -7,12 +8,28 @@ public partial class MainViewModel : ViewModelBase
 {
     public MainViewModel()
     {
-        camera = new(OnNewFrame, true);
-        camera.Start();
+        camera = new(true);
+        camera.FrameChanged += OnNewFrame;
     }
     private CameraWinRT camera;
-    private void OnNewFrame(byte[] data, System.Drawing.Size imagesize, int frameID) => FrameData = (data, imagesize, frameID);    
+
+    private void OnNewFrame(object? sender, FrameEventArgs e)
+    {
+        FrameData = e;
+    }
+    public async Task Start()
+    {
+        await camera.Start();
+
+        if (!camera.IsCameraAvailable)
+        {
+            ErrorText = "Камере недоступна. Отсутсвует. Или занята.";
+        }
+    }
 
     [ObservableProperty]
-    private (byte[] Data, System.Drawing.Size Imagesize, int FrameID)? _FrameData;
+    private FrameEventArgs? _frameData;
+    
+    [ObservableProperty]
+    private string _errorText = string.Empty;
 }

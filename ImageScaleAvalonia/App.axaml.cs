@@ -15,7 +15,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public async override void OnFrameworkInitializationCompleted()
     {
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
@@ -27,6 +27,7 @@ public partial class App : Application
             {
                 DataContext = new MainViewModel()
             };
+            await ((MainViewModel)(desktop.MainWindow.DataContext)).Start();
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

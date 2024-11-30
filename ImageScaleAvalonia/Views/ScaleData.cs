@@ -10,6 +10,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using System.IO;
 using Windows.Graphics.Imaging;
+using ImageScaleModels;
 
 namespace ImageScaleAvalonia.Views
 {
@@ -88,29 +89,29 @@ namespace ImageScaleAvalonia.Views
 
         private static void OnFrameChanged(ScaleData element, AvaloniaPropertyChangedEventArgs e)
         {
-            if (e.NewValue is ValueTuple<byte[], System.Drawing.Size, int> framedata)
+            if (e.NewValue is /*ValueTuple<byte[], System.Drawing.Size, int>*/FrameEventArgs framedata)
             {
-                var size = framedata.Item2;
-                if (framedata.Item1.Length == size.Width * size.Height)
+                var size = framedata.Size;
+                if (framedata.Frame.Length == size.Width * size.Height)
                 { // byte[] в формате bitmap GRAY8
                   // не поддерживает в данной реализации
                 }
                 else
                 { // вариант для byte[] содержит изображение в формате файла JPG
-                    element.fPSController.AddFrame(framedata.Item3, element.IsEvenNumberId, (fpsCam, fpsUI) =>
+                    element.fPSController.AddFrame(framedata.FrameId, element.IsEvenNumberId, (fpsCam, fpsUI) =>
                     { 
                         element.FPS_UI = fpsUI; element.FPSCamera = fpsCam; 
                     });
-                    bool IsCurrentFrameEven = framedata.Item3 % 2 == 0;
+                    bool IsCurrentFrameEven = framedata.FrameId % 2 == 0;
                     if (element.IsEvenNumberId == null || IsCurrentFrameEven == element.IsEvenNumberId)
                     {
-                        using (var stream = new MemoryStream(framedata.Item1))
+                        using (var stream = new MemoryStream(framedata.Frame))
                         {
                             // Загружаем изображение в Bitmap из MemoryStream
                             var bitmap = new Bitmap(stream);
                             element.BitmapData = bitmap;
                         }
-                        element.FrameID = framedata.Item3;
+                        element.FrameID = framedata.FrameId;
                     }                            
                 }
             }
