@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using ImagesScale.ViewModels;
 using System.Windows;
 
 namespace ImagesScale
@@ -14,7 +13,12 @@ namespace ImagesScale
             base.OnStartup(e);
 
             new Window1().Show();
+
         }
     }
 
+    public class Locator
+    {
+        public MainWindowViewModel? MainVM { get; set; }
+    }
 }

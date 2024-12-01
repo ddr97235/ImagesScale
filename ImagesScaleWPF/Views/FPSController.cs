@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ImagesScale.Views
+﻿namespace ImagesScale.Views
 {
     internal class FPSController
     {
@@ -12,6 +6,7 @@ namespace ImagesScale.Views
         private int _CurrentShowFPS = 0;
         private readonly TimeSpan OneSecond = new TimeSpan(0, 0, 1);
         private DateTime _StartSecondTime = DateTime.Now;
+
         /// <summary>
         /// Требуется вызывать для каждого пришедшего с камеры кадра.
         /// </summary>

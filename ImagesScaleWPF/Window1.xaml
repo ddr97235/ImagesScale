@@ -12,10 +12,8 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <Rectangle views:ScaleData.TargetBox="{DynamicResource sd}"
-                       Fill="{Binding Path=(views:ScaleData.VisualBrush), RelativeSource={RelativeSource Self}}"
-                       Stroke="Green" StrokeThickness="2">
-        </Rectangle>
+        <Image Source="{Binding Frame, Source={StaticResource sd}}"/>
+
         <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="10"
                           ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" Cursor="SizeWE"/>
     </Grid>

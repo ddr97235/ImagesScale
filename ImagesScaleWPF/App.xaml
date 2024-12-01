@@ -2,11 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ImagesScale"
-              xmlns:views="clr-namespace:ImagesScale.Views"
+              xmlns:views="clr-namespace:ImagesScale.Views" xmlns:vm="clr-namespace:ImagesScale.ViewModels"
              StartupUri="/MainWindow.xaml">
-   <Application.Resources>
-        <views:ScaleData x:Key="sd"
-                         Scale="1"
-                         IsEvenNumberId="True"/>
+    <Application.Resources>
+        <local:Locator x:Key="locator">
+            <local:Locator.MainVM>
+                <vm:MainWindowViewModel/>
+            </local:Locator.MainVM>
+        </local:Locator>
+        <views:FrameImage x:Key="sd"
+                          Source="{Binding MainVM.FrameData.Frame, Mode=OneWay, Source={StaticResource locator}}"
+                          Scale="1"
+                          IsEvenNumberId="True"/>
     </Application.Resources>
 </Application>

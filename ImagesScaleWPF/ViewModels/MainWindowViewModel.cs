@@ -9,7 +9,7 @@ namespace ImagesScale.ViewModels
         public MainWindowViewModel()
         {
             camera = new(true);
-            //camera.FrameChanged += OnNewFrame;
+            camera.FrameChanged += OnNewFrame;
             camera.IsCameraAvailableChanged += OnIsCameraAvailable;
         }
 
