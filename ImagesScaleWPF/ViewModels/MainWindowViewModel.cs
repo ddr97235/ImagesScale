@@ -9,7 +9,7 @@ namespace ImagesScale.ViewModels
         public MainWindowViewModel()
         {
             camera = new(true);
-            camera.FrameChanged += OnNewFrame;
+            //camera.FrameChanged += OnNewFrame;
             camera.IsCameraAvailableChanged += OnIsCameraAvailable;
         }
 
@@ -28,7 +28,7 @@ namespace ImagesScale.ViewModels
             FrameData = e;
         }
 
-        private readonly CameraWinRT camera;
+        public readonly CameraWinRT camera;
 
         private static readonly FrameEventArgs emptyFrame = new([], Size.Empty, -1);
         [ObservableProperty]

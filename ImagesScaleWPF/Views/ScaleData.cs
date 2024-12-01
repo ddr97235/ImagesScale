@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImageScaleModels;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -7,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace ImagesScale.Views
 {
@@ -302,35 +304,7 @@ namespace ImagesScale.Views
 
         }
 
-
-
-        //public ScaleData TargetBox
-        //{
-        //    get { return (ScaleData)GetValue(TargetBoxProperty); }
-        //    set { SetValue(TargetBoxProperty, value); }
-        //}
-
-        //// Using a DependencyProperty as the backing store for TargetBox.  This enables animation, styling, binding, etc...
-        //public static readonly DependencyProperty TargetBoxProperty =
-        //    DependencyProperty.Register(nameof(TargetBoxProperty)[0..^8],
-        //                                typeof(ScaleData),
-        //                                typeof(ScaleData),
-        //                                new PropertyMetadata(null)
-        //                                {
-        //                                    PropertyChangedCallback = (d, e) =>
-        //                                    {
-        //                                        FrameworkElement fe = (FrameworkElement)d;
-        //                                        if (e.NewValue is ScaleData sd)
-        //                                        {
-        //                                            SetScaleBox(fe, sd.ViewboxAbsolute);
-        //                                        }
-        //                                    }
-        //                                });
-
-
-
-
-        public static ScaleData GetTargetBox(DependencyObject obj)
+         public static ScaleData GetTargetBox(DependencyObject obj)
         {
             return (ScaleData)obj.GetValue(TargetBoxProperty);
         }
@@ -405,6 +379,72 @@ namespace ImagesScale.Views
                                         });
 
 
+        public void OnNewFrame(object? sender, FrameEventArgs e)
+        {
+            if (Application.Current is not null && e.Frame!= null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (fPSController.AddFrame(e.FrameId, IsEvenNumberId, (fpsCam, fpsUI) =>{FPS_UI = fpsUI; FPSCamera = fpsCam;}))
+                    {
+                        FrameData = e.Frame;
+                        FrameID = e.FrameId;
+                    }
+                });
+            }
+        }
+
+        public byte[] FrameData
+        {
+            get { return (byte[])GetValue(FrameDataProperty); }
+            set { SetValue(FrameDataProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Visual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FrameDataProperty =
+            DependencyProperty.Register(nameof(FrameData),
+                                        typeof(byte[]),
+                                        typeof(ScaleData),
+                                        new PropertyMetadata(null){});
+        public int FrameID
+        {
+            get { return (int)GetValue(FrameIDProperty); }
+            set { SetValue(FrameIDProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Visual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FrameIDProperty =
+            DependencyProperty.Register(nameof(FrameID),
+                                        typeof(int),
+                                        typeof(ScaleData),
+                                        new PropertyMetadata(null) { });
+        private FPSController fPSController = new();
+
+        private int FPS_UI
+        {
+            get { return (int)GetValue(FPS_UIProperty); }
+            set { SetValue(FPS_UIProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Visual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FPS_UIProperty =
+            DependencyProperty.Register(nameof(FPS_UI),
+                                        typeof(int),
+                                        typeof(ScaleData),
+                                        new PropertyMetadata(null) { });
+        private int FPSCamera
+        {
+            get { return (int)GetValue(FPSCameraProperty); }
+            set { SetValue(FPSCameraProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Visual.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty FPSCameraProperty =
+            DependencyProperty.Register(nameof(FPSCamera),
+                                        typeof(int),
+                                        typeof(ScaleData),
+                                        new PropertyMetadata(null) { });
     }
+
 
 }

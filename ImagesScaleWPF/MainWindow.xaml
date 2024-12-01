@@ -35,9 +35,9 @@
                 views:ScaleData.ScaleData="{DynamicResource sd}">
             <Image.Style>
                 <Style TargetType="Image">
-                    <Setter Property="Source" Value="{Binding FrameData.Frame}"/>
+                    <Setter Property="Source" Value="{Binding FrameData, Source={StaticResource sd}}"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding FrameData.Frame.Length}" Value="0">
+                        <DataTrigger Binding="{Binding FrameData.Length, Source={StaticResource sd}}" Value="0">
                             <Setter Property="Source" Value="/Images/free-icon-no-photo-red.png"/>
                         </DataTrigger>
                         <Trigger Property="Visibility" Value="Visible">
@@ -85,6 +85,9 @@
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=Even, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
             <RadioButton  Content="Только нечетные" GroupName="FrameId"
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=NotEven, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
+            <TextBlock Text="{Binding FrameID, StringFormat=Frame ID: {0},Source={StaticResource sd}}"/>
+            <TextBlock Text="{Binding FPSCamera, StringFormat=Camera FPS: {0},Source={StaticResource sd}}"/>
+            <TextBlock Text="{Binding FPS_UI, StringFormat=UI FPS: {0},Source={StaticResource sd}}"/>
         </StackPanel>
 
         <Grid Grid.Row="1" Grid.Column="2" ClipToBounds="True">

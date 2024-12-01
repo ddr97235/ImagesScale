@@ -1,5 +1,7 @@
 ﻿using ImagesScale.ViewModels;
+using ImagesScale.Views;
 using System.Windows;
+using System.Windows.Media;
 
 namespace ImagesScale
 {
@@ -18,6 +20,10 @@ namespace ImagesScale
         {
             MainWindowViewModel vm = (MainWindowViewModel)DataContext;
             await vm.Start();
+            if (Application.Current.Resources["sd"] is ScaleData scaleData)
+            {
+                vm.camera.FrameChanged += scaleData!.OnNewFrame;
+            }
         }
     }
 
