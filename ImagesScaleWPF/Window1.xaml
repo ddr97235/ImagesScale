@@ -12,9 +12,9 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <Image Source="{Binding Frame, Source={StaticResource sd}}"/>
+        <Image Source="{Binding Frame, Source={StaticResource fi}}" Cursor=""/>
 
         <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="10"
-                          ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" Cursor="SizeWE"/>
+                      ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" Cursor="SizeWE"/>
     </Grid>
 </Window>

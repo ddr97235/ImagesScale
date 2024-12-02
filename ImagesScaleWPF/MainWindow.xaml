@@ -30,7 +30,8 @@
         <TextBlock x:Name="textBlock" Text="{Binding ErrorText}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <Rectangle Fill="LightBlue"/>
         <Image Stretch="Uniform"
-               views:FrameImage.FrameImage="{DynamicResource sd}" Source="{Binding FrameData.Frame, Mode=OneWay}">
+               views:SelectRectFrameworkElement.SelectRectFrameworkElement="{DynamicResource sd}"
+               Source="{Binding FrameData.Frame, Mode=OneWay}">
             <Image.Style>
                 <Style TargetType="Image">
                     <Setter Property="Source" Value="{Binding Source, Source={StaticResource sd}}"/>
@@ -83,7 +84,7 @@
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=Even, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
             <RadioButton  Content="Только нечетные" GroupName="FrameId"
                           IsChecked="{Binding IsEvenNumberId, ConverterParameter=NotEven, Converter={views:BoolToEvenNumber}, Source={StaticResource sd}}"/>
-            <TextBlock Text="{Binding FrameID, StringFormat=Frame ID: {0},Source={StaticResource sd}}"/>
+            <!--<TextBlock Text="{Binding FrameID, StringFormat=Frame ID: {0},Source={StaticResource sd}}"/>-->
             <!--<TextBlock Text="{Binding FPSCamera, StringFormat=Camera FPS: {0},Source={StaticResource sd}}"/>
             <TextBlock Text="{Binding FPS_UI, StringFormat=UI FPS: {0},Source={StaticResource sd}}"/>-->
         </StackPanel>
@@ -93,10 +94,11 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
-            <Rectangle views:FrameImage.TargetBox="{DynamicResource sd}"
+            <!--<Rectangle views:FrameImage.TargetBox="{DynamicResource sd}"
                        Fill="{Binding (views:ScaleData.VisualBrush), RelativeSource={RelativeSource Self}}"
                        Stroke="Green" StrokeThickness="2">
-            </Rectangle>
+            </Rectangle>-->
+            <Image Source="{Binding Frame, Source={StaticResource fi}}"/>
             <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="10"
                           ResizeBehavior="PreviousAndCurrent" HorizontalAlignment="Left" Cursor="SizeWE"/>
         </Grid>

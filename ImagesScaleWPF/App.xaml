@@ -10,9 +10,10 @@
                 <vm:MainWindowViewModel/>
             </local:Locator.MainVM>
         </local:Locator>
-        <views:FrameImage x:Key="sd"
-                          Source="{Binding MainVM.FrameData.Frame, Mode=OneWay, Source={StaticResource locator}}"
-                          Scale="1"
-                          IsEvenNumberId="True"/>
-    </Application.Resources>
+        <views:SelectRectFrameworkElement x:Key="sd"
+                          Scale="1"/>
+         <views:FrameImage x:Key="fi"
+                           Source="{Binding MainVM.FrameData.Frame, Mode=OneWay, Source={StaticResource locator}}"
+                           FrameRectRelative="{Binding ViewboxRelative, Source={StaticResource sd}}"/>
+   </Application.Resources>
 </Application>
